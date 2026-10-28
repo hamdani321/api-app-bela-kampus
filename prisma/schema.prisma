@@ -1,0 +1,152 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+
+
+enum JenisKelamin {
+  LAKI_LAKI
+  PEREMPUAN
+}
+model mahasiswa {
+  id Int @id
+  nama String @db.VarChar(100)
+  email String @db.VarChar(100)
+  nim String @db.VarChar(100)
+  kode_prodi Int
+  kelas_id Int
+  jenis_kelamin JenisKelamin
+  createdAt DateTime?
+  updatedAt DateTime?
+  kelas kelas @relation(fields: [kelas_id], references: [id])
+  prodi prodi @relation(fields: [kode_prodi], references: [kode_prodi])
+  @@map("mahasiswa")
+}
+
+enum StatusPortal {
+  AKTIF
+  NONAKTIF
+}
+model portal {
+  id Int @id
+  tahun_ajaran_id Int
+  waktu_mulai DateTime
+  waktu_selesai DateTime
+  status StatusPortal
+  createdAt DateTime?
+  updatedAt DateTime?
+  @@map("portal")
+}
+
+model kelas {
+  id Int @id
+  nama String @db.VarChar(100)
+  prodi_id String @db.VarChar(100)
+  dosen_id String @db.VarChar(100)
+  createdAt DateTime?
+  updatedAt DateTime?
+  mahasiswa mahasiswa[]
+  @@map("kelas")
+}
+
+model prodi {
+  id Int @id
+  kode_prodi Int @unique
+  nama String @db.VarChar(100)
+  singkatan String @db.VarChar(100)
+  jenjang String @db.VarChar(100)
+  kaprodi String @db.VarChar(100)
+  createdAt DateTime?
+  updatedAt DateTime?
+  mahasiswa mahasiswa[]
+  @@map("prodi")
+}
+
+enum RegistrasiTipe {
+  INDIVIDU
+  KELOMPOK
+}
+
+enum RegistrasiStatus {
+  Pending
+  Approve
+}
+
+model registrasi {
+  id Int @id
+  portal_id Int
+  sekolah_id Int
+  nim_mahasiswa Int
+  tipe RegistrasiTipe
+  status RegistrasiStatus
+  createdAt DateTime?
+  updatedAt DateTime?
+  @@map("registrasi")
+}
+
+model registrasi_anggota {
+  id Int @id
+  registrasi_id Int
+  portal_id Int
+  nim_mahasiswa Int
+  createdAt DateTime?
+  updatedAt DateTime?
+  @@map("registrasi_anggota")
+}
+
+model report_kegiatan {
+  id Int @id
+  registrasi_id Int
+  nim_mahasiswa Int
+  nama_pic String @db.VarChar(100)
+  nomor_hp_pic String @db.VarChar(100)
+  foto String @db.VarChar(100)
+  video String @db.VarChar(100)
+  deskripsi String @db.Text()
+  createdAt DateTime?
+  updatedAt DateTime?
+  @@map("report_kegiatan")
+}
+
+model sekolah {
+  id Int @id
+  nama String @db.VarChar(100)
+  email String @db.VarChar(100)
+  alamat String @db.VarChar(100)
+  telepon String @db.VarChar(100)
+  latitude String @db.VarChar(100)
+  longitude String @db.VarChar(100)
+  createdAt DateTime?
+  updatedAt DateTime?
+  @@map("sekolah")
+}
+
+enum TahunAjaranJenis {
+  Ganjil
+  Genap
+}
+model tahun_ajaran {
+  id Int @id
+  nama String @db.VarChar(100)
+  tahun Int @default(0)
+  jenis TahunAjaranJenis
+  createdAt DateTime?
+  updatedAt DateTime?
+}
+
+model users {
+ id Int @id
+ name String @db.VarChar(100)
+ email String @db.VarChar(100)
+ password String @db.VarChar(100)
+}
