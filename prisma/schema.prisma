@@ -23,7 +23,7 @@ model mahasiswa {
   nama String @db.VarChar(100)
   email String @db.VarChar(100)
   nim String @db.VarChar(100)
-  kode_prodi Int
+  kode_prodi String @db.VarChar(100)
   kelas_id Int
   jenis_kelamin JenisKelamin
   createdAt DateTime?
@@ -61,7 +61,7 @@ model kelas {
 
 model prodi {
   id Int @id
-  kode_prodi Int @unique
+  kode_prodi String @unique
   nama String @db.VarChar(100)
   singkatan String @db.VarChar(100)
   jenjang String @db.VarChar(100)
@@ -126,6 +126,7 @@ model sekolah {
   telepon String @db.VarChar(100)
   latitude String @db.VarChar(100)
   longitude String @db.VarChar(100)
+  namaKepsek String @db.VarChar(100)
   createdAt DateTime?
   updatedAt DateTime?
   @@map("sekolah")
