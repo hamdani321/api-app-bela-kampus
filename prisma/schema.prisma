@@ -12,24 +12,26 @@ datasource db {
   provider = "mysql"
 }
 
-
-
 enum JenisKelamin {
   LAKI_LAKI
   PEREMPUAN
 }
+
 model mahasiswa {
   id Int @id
   nama String @db.VarChar(100)
-  email String @db.VarChar(100)
-  nim String @db.VarChar(100)
-  kode_prodi String @db.VarChar(100)
+  email String @db.VarChar(100) @unique
+  nim String  @db.VarChar(100) @unique
+  kode_prodi Int
   kelas_id Int
   jenis_kelamin JenisKelamin
   createdAt DateTime?
   updatedAt DateTime?
   kelas kelas @relation(fields: [kelas_id], references: [id])
   prodi prodi @relation(fields: [kode_prodi], references: [kode_prodi])
+  registrasi_anggota registrasi_anggota[]
+  registrasi registrasi[]
+  user users?
   @@map("mahasiswa")
 }
 
@@ -37,6 +39,7 @@ enum StatusPortal {
   AKTIF
   NONAKTIF
 }
+
 model portal {
   id Int @id
   tahun_ajaran_id Int
@@ -45,6 +48,9 @@ model portal {
   status StatusPortal
   createdAt DateTime?
   updatedAt DateTime?
+  registrasi registrasi[]
+  tahun_ajaran tahun_ajaran @relation(fields: [tahun_ajaran_id], references: [id])
+
   @@map("portal")
 }
 
@@ -61,7 +67,7 @@ model kelas {
 
 model prodi {
   id Int @id
-  kode_prodi String @unique
+  kode_prodi Int @unique
   nama String @db.VarChar(100)
   singkatan String @db.VarChar(100)
   jenjang String @db.VarChar(100)
@@ -83,31 +89,39 @@ enum RegistrasiStatus {
 }
 
 model registrasi {
-  id Int @id
+  id Int @id @default(autoincrement())
   portal_id Int
   sekolah_id Int
-  nim_mahasiswa Int
+  nim_mahasiswa String
   tipe RegistrasiTipe
   status RegistrasiStatus
   createdAt DateTime?
   updatedAt DateTime?
+  registrasi_anggota registrasi_anggota[]
+  portal portal @relation(fields: [portal_id], references: [id])
+
+  mahasiswa mahasiswa @relation(fields: [nim_mahasiswa], references: [nim])
+  sekolah sekolah @relation(fields: [sekolah_id], references: [id])
+
   @@map("registrasi")
 }
 
 model registrasi_anggota {
-  id Int @id
+  id Int @id @default(autoincrement())
   registrasi_id Int
   portal_id Int
-  nim_mahasiswa Int
+  nim_mahasiswa String
   createdAt DateTime?
   updatedAt DateTime?
+  registrasi registrasi @relation(fields: [registrasi_id], references: [id])
+  mahasiswa mahasiswa @relation(fields: [nim_mahasiswa], references: [nim])
   @@map("registrasi_anggota")
 }
 
 model report_kegiatan {
   id Int @id
   registrasi_id Int
-  nim_mahasiswa Int
+  nim_mahasiswa String
   nama_pic String @db.VarChar(100)
   nomor_hp_pic String @db.VarChar(100)
   foto String @db.VarChar(100)
@@ -119,16 +133,19 @@ model report_kegiatan {
 }
 
 model sekolah {
-  id Int @id
+  id Int @id @default(autoincrement())
+  npsn String @db.VarChar(100) @unique
   nama String @db.VarChar(100)
-  email String @db.VarChar(100)
+  email String @db.VarChar(100) @unique
   alamat String @db.VarChar(100)
   telepon String @db.VarChar(100)
   latitude String @db.VarChar(100)
   longitude String @db.VarChar(100)
-  namaKepsek String @db.VarChar(100)
+  namaKepsek String? @db.VarChar(100)
   createdAt DateTime?
   updatedAt DateTime?
+
+  registrasi registrasi[]
   @@map("sekolah")
 }
 
@@ -143,11 +160,27 @@ model tahun_ajaran {
   jenis TahunAjaranJenis
   createdAt DateTime?
   updatedAt DateTime?
+
+  //relasi
+  portal portal[]
 }
 
 model users {
  id Int @id
  name String @db.VarChar(100)
- email String @db.VarChar(100)
+ email String @db.VarChar(100) @unique
  password String @db.VarChar(100)
+ roles role_users[]
+ mahasiswa mahasiswa @relation(fields: [email], references: [email])
+}
+
+enum Roles {
+  ADMIN
+  MAHASISWA
+}
+model role_users {
+  id Int @id
+  user_id Int
+  role Roles
+  user users @relation(fields: [user_id], references: [id])
 }

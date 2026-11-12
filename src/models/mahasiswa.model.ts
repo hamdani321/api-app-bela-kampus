@@ -5,7 +5,7 @@ export class Mahasiswa {
   nama: string;
   email: string;
   nim: string;
-  kode_prodi: string;
+  kode_prodi: number;
   kelas_id: number;
   jenis_kelamin: JenisKelamin;
   createdAt?: Date | null;

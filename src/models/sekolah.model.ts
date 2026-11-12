@@ -1,5 +1,6 @@
 export class Sekolah {
   id: number = 0;
+  npsn: string = '';
   nama: string = '';
   email: string = '';
   alamat: string = '';
@@ -17,4 +18,19 @@ export class SekolahResponse {
     this.message = message;
     this.data = data;
   }
+}
+
+export class SekolahRequest {
+  nama: string;
+
+  npsn: string;
+  email: string;
+
+  alamat: string;
+
+  telepon: string;
+
+  latitude: string;
+
+  longitude: string;
 }

@@ -5,15 +5,21 @@ import { ConfigModule } from '@nestjs/config';
 import { SekolahModule } from './sekolah/sekolah.module.js';
 import { PortalModule } from './portal/portal.module.js';
 import { RegistrasiModule } from './registrasi/registrasi.module.js';
+import { AuthModule } from './auth/auth.module.js';
+import { TahunAjaranModule } from './tahun_ajaran/tahun-ajaran.module.js';
+import { UsersModule } from './users/users.module.js';
 
 @Module({
   imports: [
     CommonModule,
     MahasiswaModule,
     SekolahModule,
-    ConfigModule.forRoot({ isGlobal: true }),
     PortalModule,
     RegistrasiModule,
+    TahunAjaranModule,
+    AuthModule,
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
+    UsersModule,
   ],
   controllers: [],
   providers: [],

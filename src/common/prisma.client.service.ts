@@ -1,19 +1,20 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '../generated/prisma/client.js';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PrismaClientService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  constructor() {
+  constructor(private configService: ConfigService) {
     const adapter = new PrismaMariaDb({
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT ?? 3306),
-      database: process.env.DB_NAME,
-      user: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
+      host: configService.getOrThrow<string>('DB_HOST'),
+      port: configService.getOrThrow<number>('DB_PORT'),
+      database: configService.getOrThrow<string>('DB_NAME'),
+      user: configService.getOrThrow<string>('DB_USERNAME'),
+      password: configService.getOrThrow<string>('DB_PASSWORD'),
       connectionLimit: 5,
     });
     super({
@@ -22,11 +23,11 @@ export class PrismaClientService
   }
   async onModuleInit(): Promise<void> {
     await this.$connect();
-    console.log('Prisma berhasil terhubung ke database');
+    console.log('Database Connected!');
   }
 
   async onModuleDestroy(): Promise<void> {
     await this.$disconnect();
-    console.log('Koneksi Prisma ditutup');
+    console.log('Database Disconnected!');
   }
 }

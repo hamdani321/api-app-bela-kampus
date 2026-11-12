@@ -1788,6 +1788,7 @@ export async function seedSekolah() {
     data: dataSekolah.map((item, index) => {
       return {
         id: Number(index + 1),
+        npsn: String(index),
         nama: item.nama,
         telepon: item.telepon,
         email: item.email,
